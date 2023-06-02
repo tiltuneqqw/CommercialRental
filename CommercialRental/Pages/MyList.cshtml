@@ -1,0 +1,317 @@
+﻿@page "/my-list"
+
+@using CommercialRental.Models
+@using System.Security.Claims
+@using System.Globalization;
+
+@inject UserManager<User> _userManager
+@inject CommercialRental.Data.ApplicationDbContext _context
+
+@model CommercialRental.Pages.MyListModel
+@{
+    ViewData["Title"] = "Мій профіль";
+    Layout = "_Layout";
+
+    <link rel="stylesheet" href="~/css/mylist.css" />
+    User user = await _userManager.GetUserAsync(User);
+}
+
+<div class="aside-links">
+    <form method="post">
+        <button asp-page-handler="mylist" type="submit" class="btn-aside" title="Мої оголошення" style="@(Model.Collapsed == 1 ? "border-bottom: 1px solid white; transition: border-bottom 1s;" : "")">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-tags" viewBox="0 0 16 16">
+                <path d="M3 2v4.586l7 7L14.586 9l-7-7H3zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2z" />
+                <path d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM1 7.086a1 1 0 0 0 .293.707L8.75 15.25l-.043.043a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 0 7.586V3a1 1 0 0 1 1-1v5.086z" />
+            </svg>
+            <span>МОЇ ОГОЛОШЕННЯ</span>
+        </button>
+        <button asp-page-handler="requests" type="submit" class="btn-aside" title="Заявки на оренду" style="@(Model.Collapsed == 2 ? "border-bottom: 1px solid white; transition: border-bottom 1s;" : "")">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-list-check" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" />
+            </svg>
+            <span>ЗАЯВКИ НА ОРЕНДУ</span>
+        </button>
+        <button asp-page-handler="rented" type="submit" class="btn-aside" title="Орендовані мною" style="@(Model.Collapsed == 3 ? "border-bottom: 1px solid white; transition: border-bottom 1s;" : "")">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-alarm" viewBox="0 0 16 16">
+                <path d="M8.5 5.5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9V5.5z" />
+                <path d="M6.5 0a.5.5 0 0 0 0 1H7v1.07a7.001 7.001 0 0 0-3.273 12.474l-.602.602a.5.5 0 0 0 .707.708l.746-.746A6.97 6.97 0 0 0 8 16a6.97 6.97 0 0 0 3.422-.892l.746.746a.5.5 0 0 0 .707-.708l-.601-.602A7.001 7.001 0 0 0 9 2.07V1h.5a.5.5 0 0 0 0-1h-3zm1.038 3.018a6.093 6.093 0 0 1 .924 0 6 6 0 1 1-.924 0zM0 3.5c0 .753.333 1.429.86 1.887A8.035 8.035 0 0 1 4.387 1.86 2.5 2.5 0 0 0 0 3.5zM13.5 1c-.753 0-1.429.333-1.887.86a8.035 8.035 0 0 1 3.527 3.527A2.5 2.5 0 0 0 13.5 1z" />
+            </svg>
+            <span>ОРЕНДОВАНІ</span>
+        </button>
+        <button asp-page-handler="settings" type="submit" class="btn-aside" title="Налаштування профілю" style="@(Model.Collapsed == 4 ? "border-bottom: 1px solid white; transition: border-bottom 1s;" : "")">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-sliders" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3h9.05zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8h2.05zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1h9.05z" />
+            </svg>
+            <span>НАЛАШТУВАННЯ ПРОФІЛЮ</span>
+        </button>
+        <button asp-page="/Create" type="submit" class="btn-aside" title="Створити оголошення">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+            </svg>
+            <span>СТВОРИТИ ОГОЛОШЕННЯ</span>
+        </button>
+    </form>
+</div>
+<div class="list-div" style="@(Model.Collapsed == 4 ? "justify-content: center;" : "")">
+    @if (Model.Collapsed == 1)
+    {
+        @if (Model.Advertisments != null && Model.Advertisments.Count > 0)
+        {
+            @foreach (Advertisment adv in Model.Advertisments)
+            {
+                <div class="list-item popup-trigger" data-popup-id="@adv.Id">
+                    @if (adv.IsRented)
+                    {
+                        <div class="is-rented">
+                            В активній оренді
+                        </div>
+                    }
+                    @{
+                        bool isRequested = _context.RequestsRent.Any(i => i.AdvertismentId.Equals(adv.Id));
+                        if (isRequested && !adv.IsRented)
+                        {
+                            <div class="is-requested">
+                                Присутні заявки на оренду
+                            </div>
+                        }
+                    }
+                    <div class="inside-list-item">
+                        <div style="display:flex; align-items: center;gap: 5px;">
+                            <div id="id">#@adv.Id</div>
+                            @{
+                                NumberFormatInfo nfi = new NumberFormatInfo();
+                                nfi.CurrencySymbol = "";
+                                nfi.CurrencyDecimalDigits = 0;
+                                string formattedPrice = (adv.Price * adv.Square).ToString("C", nfi);
+                            }
+                            <div id="info-price">
+                                @(formattedPrice)<span id="currency">грн/місяць</span>
+                            </div>
+                        </div>
+                        <div id="info-street">@adv.FullStreetName</div>
+                        <div id="info-location">@adv.Region | м. @adv.City</div>
+                        @{
+                            var image = _context.Files.FirstOrDefault(i => i.AdvertismentId.Equals(adv.Id));
+                            if (image != null)
+                            {
+                                string base64String = Convert.ToBase64String(image.Content, 0, image.Content.Length);
+                                <div class="main-image">
+                                    <img src="@("data:image/png;base64," + base64String)" height="100%" />
+                                </div>
+                            }
+                        }
+                        <div class="details-table">
+                            <div class="detail-name">Дата створення: </div>
+                            <div class="detail-value">@adv.CreationDate.ToShortDateString()</div>
+                        </div>
+                        @if (adv.IsRented)
+                        {
+                            <form method="post" style="text-align: center;">
+                                <button asp-page-handler="CancelRent" asp-route-id="@adv.Id" type="submit" class="btn btn-danger btn-allow-adv">
+                                    Відмінити оренду
+                                </button>
+                            </form>
+                        }
+                        <div class="cancel-adv">
+                            <form method="post">
+                                <button onclick="showDiv(@adv.Id)" type="button" class="btn btn-cancel-adv" title="Видалити оголошення">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#F45050" class="bi bi-x-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                        <div id="@adv.Id" class="cancel-div">
+                            <span>Ви впевнені, що хочете видалити оголошення #@adv.Id?</span>
+                            <div class="cancel-buttons">
+                                <form method="post">
+                                    <button asp-page-handler="RemoveAdvertisment" type="submit" class="btn btn-success" asp-route-id="@adv.Id">Так</button>
+                                    <button type="submit" class="btn btn-danger">Ні</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <h2>Ви ще не створили оголошення.</h2>
+        }
+    }
+    else if (Model.Collapsed == 2)
+    {
+        if (Model.Requests != null && Model.Requests.Count > 0)
+        {
+            @foreach (RequestRent request in Model.Requests)
+            {
+                <div class="list-item popup-trigger inside-list-item" data-popup-id="@request.Id">
+                    <div style="display:flex; align-items: center;gap: 5px;">
+                        <div id="id">#@request.AdvertismentId</div>
+                        @{
+                            NumberFormatInfo nfi = new NumberFormatInfo();
+                            nfi.CurrencySymbol = "";
+                            nfi.CurrencyDecimalDigits = 0;
+                            string formattedPrice = (request.RequestAdvertisment.Price * request.RequestAdvertisment.Square).ToString("C", nfi);
+                        }
+                        <div id="info-price">
+                            @(
+                                formattedPrice
+                                )<span id="currency">грн/місяць</span>
+                        </div>
+                    </div>
+                    <div id="info-street">@request.RequestAdvertisment.FullStreetName</div>
+                    <div id="info-location">@request.RequestAdvertisment.Region | м. @request.RequestAdvertisment.City</div>
+                    @{
+                        var image = _context.Files.FirstOrDefault(i => i.AdvertismentId.Equals(request.RequestAdvertisment.Id));
+                        if (image != null)
+                        {
+                            string base64String = Convert.ToBase64String(image.Content, 0, image.Content.Length);
+                            <div class="main-image">
+                                <img src="@("data:image/png;base64," + base64String)" onclick="modalOnClick()" id="myImg" height="100%" />
+                            </div>
+                        }
+                    }
+                    <div class="details-table">
+                        <div class="detail-name">Дата створення: </div>
+                        <div class="detail-value">@request.RequestAdvertisment.CreationDate.ToShortDateString()</div>
+                    </div>
+                    <hr />
+                    <div class="details-table">
+                        <div class="detail-name">Ім'я: </div>
+                        <div class="detail-value">@request.User.Name</div>
+                    </div>
+                    <div class="details-table">
+                        <div class="detail-name">Телефон: </div>
+                        <div class="detail-value">@request.User.PhoneNumber</div>
+                    </div>
+                    <div class="details-table">
+                        <div class="detail-name">Електронна пошта: </div>
+                        <div class="detail-value">@request.User.Email</div>
+                    </div>
+                    <div class="details-table">
+                        <div class="detail-name">Дата запиту: </div>
+                        <div class="detail-value">@request.RequestDate.ToShortDateString()</div>
+                    </div>
+                    <div class="buttons-rent">
+                        <div class="allow-adv">
+                            <form method="post">
+                                <button asp-page-handler="Rent" asp-route-id="@request.AdvertismentId" type="submit" class="btn btn-success btn-allow-adv">
+                                    Здати в оренду
+                                </button>
+                            </form>
+                        </div>
+                        <div class="allow-adv">
+                            <form method="post">
+                                <button asp-page-handler="DenyRent" asp-route-id="@request.Id" type="submit" class="btn btn-danger btn-allow-adv">
+                                    Відмовити
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <h2>Відсутні заявки на оренду.</h2>
+        }
+    }
+    else if (Model.Collapsed == 3)
+    {
+        @if (Model.Requests != null && Model.Requests.Count > 0)
+        {
+            @foreach (RequestRent request in Model.Requests)
+            {
+                <div class="list-item popup-trigger inside-list-item" data-popup-id="@request.Id">
+                    <div style="display:flex; align-items: center;gap: 5px;">
+                        <div id="id">#@request.AdvertismentId</div>
+                        @{
+                            NumberFormatInfo nfi = new NumberFormatInfo();
+                            nfi.CurrencySymbol = "";
+                            nfi.CurrencyDecimalDigits = 0;
+                            string formattedPrice = (request.RequestAdvertisment.Price * request.RequestAdvertisment.Square).ToString("C", nfi);
+                        }
+                        <div id="info-price">
+                            @(
+                                formattedPrice
+                                )<span id="currency">грн/місяць</span>
+                        </div>
+                    </div>
+                    <div id="info-street">@request.RequestAdvertisment.FullStreetName</div>
+                    <div id="info-location">@request.RequestAdvertisment.Region | м. @request.RequestAdvertisment.City</div>
+                    @{
+                        var image = _context.Files.FirstOrDefault(i => i.AdvertismentId.Equals(request.RequestAdvertisment.Id));
+                        if (image != null)
+                        {
+                            string base64String = Convert.ToBase64String(image.Content, 0, image.Content.Length);
+                            <div class="main-image">
+                                <img src="@("data:image/png;base64," + base64String)" onclick="modalOnClick()" id="myImg" height="100%"/>
+                            </div>
+                        }
+                    }
+                    <div class="details-table">
+                        <div class="detail-name">Дата початку оренди: </div>
+                        <div class="detail-value">@request.RequestAdvertisment.StartRentDate</div>
+                    </div>
+                    <hr />
+                    <h5 style="text-align: center;">Власник</h5>
+                    <div class="details-table">
+                        <div class="detail-name">Ім'я: </div>
+                        <div class="detail-value">@request.RequestAdvertisment.User.Name</div>
+                    </div>
+                    <div class="details-table">
+                        <div class="detail-name">Телефон: </div>
+                        <div class="detail-value">@request.RequestAdvertisment.User.PhoneNumber</div>
+                    </div>
+                    <div class="details-table">
+                        <div class="detail-name">Електронна пошта: </div>
+                        <div class="detail-value">@request.RequestAdvertisment.User.Email</div>
+                    </div>
+                    <form method="post" style="text-align: center;">
+                        <button asp-page-handler="CancelRent" asp-route-id="@request.AdvertismentId" type="submit" class="btn btn-danger btn-allow-adv">
+                            Відмінити оренду
+                        </button>
+                    </form>
+                </div>
+            }
+        }
+        else
+        {
+            <h2>У вас немає орендованих приміщень.</h2>
+        }
+    }
+    else if (User.Identity.IsAuthenticated && Model.Collapsed == 4)
+    {
+        <div class="settings-div">
+            <h2>Профіль</h2>
+            <hr />
+            <h5>Ім'я: @user.Name</h5>
+            <h5>Електронна пошта: @user.Email</h5>
+            <h5>Телефон: @user.PhoneNumber</h5>
+            <hr />
+            <h2>Зміна паролю</h2>
+            <form id="change-password-form" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-floating">
+                    <input asp-for="Input.OldPassword" class="form-control" autocomplete="current-password" aria-required="true" />
+                    <label asp-for="Input.OldPassword" class="form-label"></label>
+                    <span asp-validation-for="Input.OldPassword" class="text-danger"></span>
+                </div>
+                <div class="form-floating">
+                    <input asp-for="Input.NewPassword" class="form-control" autocomplete="new-password" aria-required="true" />
+                    <label asp-for="Input.NewPassword" class="form-label"></label>
+                    <span asp-validation-for="Input.NewPassword" class="text-danger"></span>
+                </div>
+                <div class="form-floating">
+                    <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
+                    <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                </div>
+                <button asp-page-handler="SettingsPassword" type="submit" class="w-100 btn btn-lg btn-primary">Оновити пароль</button>
+            </form>
+        </div>
+    }
+</div>

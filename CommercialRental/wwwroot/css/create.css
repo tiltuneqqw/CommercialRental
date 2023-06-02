@@ -1,0 +1,91 @@
+﻿.create-form {
+    width: 100%;
+    padding: 40px 20%;
+}
+
+.form-field {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.field-name {
+    font-size: 1.6em;
+    font-weight: 500;
+}
+
+.field-input {
+    width: 50%;
+}
+
+.input-price-field {
+    width: 20%;
+    height: 40px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.select-field {
+    width: 35%;
+    height: 40px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.input-field {
+    width: 50%;
+    height: 40px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.square-input {
+    height: 40px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.large-input-field {
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.field-input-image {
+    height: 40px;
+    border-radius: 10px;
+}
+
+#city-select {
+    height: 40px;
+    border-radius: 10px;
+}
+
+.field-tip {
+    margin-bottom: 10px;
+}
+
+.button-create {
+    text-align: center;
+}
+
+.btn-create {
+    width: 25%;
+}
+
+.error-div {
+    width: 600px;
+    height: 400px;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

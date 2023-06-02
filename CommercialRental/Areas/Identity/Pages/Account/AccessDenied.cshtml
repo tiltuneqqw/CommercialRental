@@ -1,0 +1,15 @@
+﻿@page "/access-denied"
+@model AccessDeniedModel
+@{
+    ViewData["Title"] = "Доступ заборонено";
+}
+
+<div style="text-align: center;padding-top:100px;">
+    <h1 class="text-danger">@ViewData["Title"]</h1>
+    <p class="text-danger">У вас недостатньо прав для перегляду цієї сторінки.</p>
+    <button type="submit" class="btn btn-dark">
+        <a asp-area="" asp-page="/Index" style="text-decoration: none; color: white;">
+            <span>Повернутися на головну</span>
+        </a>
+    </button>
+</div>

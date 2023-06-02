@@ -1,0 +1,85 @@
+﻿@media only screen and (max-width: 900px) {
+    #main-advice {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    #main-grid {
+        width: 100%;
+    }
+}
+
+.main-div {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+}
+
+.main-grid {
+    display: grid;
+    gap: 15px;
+    width: 20%;
+    height: 88vh;
+    color: #9F9FAD;
+    text-align: center;
+    font-family: Montserrat;
+    margin: 0;
+    padding: 0;
+}
+
+.main-advice {
+    width: 100%;
+    height: 88vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.map-info {
+    text-align: center;
+    color: black;
+}
+
+.map-info h3 span {
+    font-weight: 700;
+    font-size: 1.5em;
+}
+
+.map-info h6 span {
+    font-style: italic;
+    font-weight: 600;
+}
+
+.map-div {
+    height: 100%;
+    width: 100%;
+    display: block;
+    overflow: hidden;
+}
+
+.grid-element {
+    width: 100%;
+    height: 100%;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #626262;
+    font-size: 1.2em;
+    font-weight: 600;
+    border-radius: 15px;
+    border: 1px solid #626262;
+    margin-bottom: 13px;
+}
+
+    .grid-element:hover {
+        background-color: #626262;
+        color: white;
+        text-decoration: none;
+    }
+
+    a.link-grid:hover {
+        text-decoration: none;
+    }

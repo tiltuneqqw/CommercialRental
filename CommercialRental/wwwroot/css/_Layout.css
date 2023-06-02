@@ -1,0 +1,97 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+@media only screen and (max-width: 1200px) {
+    .header-title {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    .hide-text span {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    .login-nav {
+        width: 50% !important;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    .link-nav {
+        width: 50% !important;
+    }
+}
+
+.layout-div {
+    margin-top: 50px;
+}
+
+.login-nav {
+    display: flex;
+    justify-content: flex-end;
+    width: 30%;
+    gap: 5px;
+}
+
+.header-nav {
+    display: flex;
+    width: 100%;
+    font-family: Montserrat;
+    font-size: 1.4em;
+    font-weight: 600;
+    background-color: black;
+    height: 50px;
+    padding: 0 10%;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    z-index: 3;
+}
+
+
+.link-nav {
+    width: 30%;
+    padding: 10px 0;
+}
+
+.btn-home {
+    width: 100%;
+    display: flex;
+    color: white;
+    background: none;
+    outline: none;
+    border: none;
+    font-size: 1.6em;
+    font-weight: 600;
+    align-items: center;
+    height: 40px;
+    padding: 5px 0;
+    margin: 0;
+    gap: 5px;
+}
+
+.btn-home span {
+    margin-top: 5px
+}
+
+.header-title {
+    width: 40%;
+    text-transform: uppercase;
+    color: white;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.notifier-link {
+    color: black;
+    text-decoration: none;
+    height: 40px;
+    width: 100%;
+    border-radius: 5px;
+    padding: 7px 5px;
+    font-weight: 400;
+    font-size: 0.8em;
+
+}

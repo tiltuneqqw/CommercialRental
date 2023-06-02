@@ -1,0 +1,183 @@
+﻿@page "/create-advertisment"
+@model CommercialRental.Pages.CreateModel
+@{
+    ViewData["Title"] = "Створити оголошень";
+    Layout = "_Layout";
+
+    <link rel="stylesheet" href="~/css/create.css" />
+}
+
+<div class="create-form">
+    @if (!Model.Error)
+    {
+        <h1>Створення оголошення про оренду</h1>
+        <hr />
+        <form method="post" id="create-form" enctype="multipart/form-data">
+            <div class="form-field">
+                <div class="field-name">
+                    Ціна
+                </div>
+                <div class="field-tip">
+                    <label for="price">
+                        Вкажіть ціну за квадратний метр/місяць. В оголошені буде відображено повну вартість залежно від площі.
+                    </label>
+                </div>
+                <input asp-for="Advertisment.Price" type="text" value="@(Model.Advertisment.Price > 0 ? Model.Advertisment.Price : "")" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))" name="Advertisment.Price" class="form-control input-price-field" placeholder="Ціна в грн." required />
+            </div>
+            <hr />
+            <div class="form-field">
+                <div class="field-name">
+                    Область
+                </div>
+                <div class="field-tip">
+                    Виберіть область, де знаходиться приміщення
+                </div>
+                <select asp-for="Advertisment.Region" id="city-select" class="form-control select-field" required>
+                    <option value="" disabled="disabled" selected="selected">Виберіть область</option>
+                    <option value="Київська область">Київська область</option>
+                    <option value="Рівненська область">Рівненська область</option>
+                    <option value="Івано-франківська область">Івано-Франківська область</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <div class="field-name">
+                    Місто
+                </div>
+                <div class="field-tip">
+                    Виберіть місто, де знаходиться приміщення
+                </div>
+                <select asp-for="Advertisment.City" id="city-select" class="form-control select-field" required>
+                    <option value="" disabled="disabled" selected="selected">Виберіть місто</option>
+                    <option value="Київ">Київ</option>
+                    <option value="Рівне">Рівне</option>
+                    <option value="Івано-Франківськ">Івано-Франківськ</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <div class="field-name">
+                    Вулиця
+                </div>
+                <div class="field-tip">
+                    Введіть вулицю в форматі 'Черняка 6в 24кв 1поверх' або 'Соборна 313 2поверх 13офіс'
+                </div>
+                <input asp-for="Advertisment.FullStreetName" class="input-field" placeholder="Введіть вулицю" required />
+            </div>
+            <hr />
+            <div class="form-field">
+                <div class="field-name">
+                    Зображення
+                </div>
+                <div class="field-tip">
+                    Додайте 3 зображення, які дадуть змогу візуально оцінити вигляд та стан приміщення.
+                </div>
+                <input type="file" name="files" class="form-control image-input-field" multiple placeholder="Додати зображення" required />
+            </div>
+            <div class="form-field">
+                <div class="field-name">
+                    Площа
+                </div>
+                <div class="field-tip">
+                    Введіть загальну площу приміщення в метрах квадратних. (Вказувати м<sup>2</sup> не потрібно)
+                </div>
+                <input asp-for="Advertisment.Square" value="@(Model.Advertisment.Price > 0 ? Model.Advertisment.Price : "")" placeholder="Площа" class="square-input" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))" required />
+            </div>
+            <hr />
+            <div class="form-field">
+                <div class="field-name">
+                    Тип операції
+                </div>
+                <div class="field-tip">
+                    Виберіть один серед нижче перечислених варіантів
+                </div>
+                <select asp-for="Advertisment.OperationType" class="form-control select-field">
+                    <option value="" disabled="disabled" selected="selected">Виберіть тип операції</option>
+                    <option value="Продати">Продати</option>
+                    <option value="Довгостроково">Довгостроково</option>
+                    <option value="Подобово">Подобово</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <div class="field-name">
+                    Тип нерухомості
+                </div>
+                <div class="field-tip">
+                    Виберіть один серед нижче перечислених варіантів
+                </div>
+                <select asp-for="Advertisment.PropertyType" class="form-control select-field">
+                    <option value="" disabled="disabled" selected="selected">Виберіть тип нерухомості</option>
+                    <option value="Новобудова">Новобудова</option>
+                    <option value="Вторинна">Вторинна</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <div class="field-name">
+                    Тип пропозиції
+                </div>
+                <div class="field-tip">
+                    Виберіть один серед нижче перечислених варіантів
+                </div>
+                <select asp-for="Advertisment.OfferType" class="form-control select-field">
+                    <option value="" disabled="disabled" selected="selected">Виберіть тип пропозиції</option>
+                    <option value="Від власника">Від власника</option>
+                    <option value="Від посередника">Від посередника</option>
+                    <option value="Від забудовника">Від забудовника</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <div class="field-name">
+                    Тип приміщення
+                </div>
+                <div class="field-tip">
+                    Виберіть один серед нижче перечислених варіантів
+                </div>
+                <select asp-for="Advertisment.BuildingType" class="form-control select-field">
+                    <option value="" disabled="disabled" selected="selected">Виберіть тип приміщення</option>
+                    <option value="Комерційне">Комерційне</option>
+                    <option value="Спеціальне">Спеціальне</option>
+                    <option value="Офісне">Офісне</option>
+                </select>
+            </div>
+            <hr />
+            <div class="form-field">
+                <div class="field-name">
+                    Меблі або обладнання
+                </div>
+                <div class="field-tip">
+                    Опишіть, які меблі або обладнання присутнє в приміщенні
+                </div>
+                <textarea asp-for="Advertisment.Furniture" class="form-control large-input-field" rows="6" cols="50" maxlength="300" placeholder="Поле для вводу"></textarea>
+            </div>
+            <div class="form-field">
+                <div class="field-name">
+                    Додаткова інформація
+                </div>
+                <div class="field-tip">
+                    Можливо у вас є додаткова інформація, яку ви хотіли б вказати, тому використайте поле нижче
+                </div>
+                <textarea asp-for="Advertisment.AdditionalInformation" class="form-control large-input-field" rows="6" cols="50" maxlength="300" placeholder="Поле для вводу"></textarea>
+            </div>
+            <hr />
+            <div class="button-create">
+                <button asp-page-handler="CreateAdvertisment" type="submit" class="btn btn-success btn-create">
+                    Створити
+                </button>
+            </div>
+        </form>
+    }
+    else if (Model.Error)
+    {
+        <div class="error-div">
+            <h3 class="text-danger">Виникла помилка при створенні. Можливо, у вас уже є оголошення з такою адресою, перегляньте Ваші оголошення або спробуйте створити ще раз.</h3>
+            <button type="button" class="btn btn-outline-info">
+                <a asp-page="/MyList">
+                    Мої оголошення
+                </a>
+            </button>
+            <button type="button" class="btn btn-outline-info">
+                <a asp-page="/Create">
+                    Створити оголошення
+                </a>
+            </button>
+        </div>
+    }
+</div>

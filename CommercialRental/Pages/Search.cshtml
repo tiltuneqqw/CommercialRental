@@ -1,0 +1,313 @@
+﻿@page "/search-advertisments"
+
+@using CommercialRental.Models
+@using System.Globalization;
+
+@model CommercialRental.Pages.SearchModel
+@{
+    ViewData["Title"] = "Пошук нерухомості";
+    Layout = "_Layout";
+
+
+    <link rel="stylesheet" href="~/css/search.css" />
+}
+
+<div class="filter-main">
+    <div class="sidebar-category">
+        <h4 style="text-align: center; font-weight: 600;">
+            Фільтр
+        </h4>
+        <form method="post">
+            <div class="apply-filters">
+                <button type="submit" asp-page-handler="ApplyFilter" class="btn-apply btn btn-success">Застосувати</button>
+            </div>
+            <hr />
+            <div class="category-dropdown">
+                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Область</button>
+                <div class="content">
+                    <select asp-for="Filter.Region" id="region-select">
+                        <option value="" disabled="disabled" selected="selected">Виберіть область</option>
+                        <option value="Київська область">Київська область</option>
+                        <option value="Рівненська область">Рівненська область</option>
+                        <option value="Івано-Франківська область">Івано-Франківська область</option>
+                    </select>
+                </div>
+            </div>
+            <hr />
+            <div class="category-dropdown">
+                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Місто</button>
+                <div class="content">
+                    <select asp-for="Filter.City" id="city-select">
+                        <option value="" disabled="disabled" selected="selected">Виберіть місто</option>
+                        <option value="Київ">Київ</option>
+                        <option value="Рівне">Рівне</option>
+                        <option value="Івано-Франківськ">Івано-Франківськ</option>
+                    </select>
+                </div>
+            </div>
+            <hr />
+            <div class="category-dropdown">
+                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Тип операції</button>
+                <div class="content">
+                    <input asp-for="Filter.Sell" id="prodaty" type="checkbox">
+                    <label for="prodaty" class="content-label">Продати</label>
+                    <input asp-for="Filter.LongTerm" id="dovgostrokovo" type="checkbox">
+                    <label for="dovgostrokovo" class="content-label">Довгостроково</label>
+                    <input asp-for="Filter.Daily" id="podobovo" type="checkbox">
+                    <label for="podobovo" class="content-label">Подобово</label>
+                </div>
+            </div>
+            <hr />
+            <div class="category-dropdown">
+                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Тип нерухомості</button>
+                <div class="content">
+                    <input asp-for="Filter.NewBulding" id="novobydova" type="checkbox">
+                    <label for="novobydova" class="content-label">Новобудова</label>
+                    <input asp-for="Filter.Secondary" id="vtorynne" type="checkbox">
+                    <label for="vtorynne" class="content-label">Вторинна</label>
+                </div>
+            </div>
+            <hr />
+            <div class="category-dropdown">
+                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Тип приміщення</button>
+                <div class="content">
+                    <input asp-for="Filter.Commercial" id="komerciine" type="checkbox">
+                    <label for="komerciine" class="content-label" title="Виробниче, складське або приміщення вільного призначення">Комерційне</label>
+                    <input asp-for="Filter.Special" id="specialne" type="checkbox">
+                    <label for="specialne" class="content-label" title="Бари, кафе, ресторани, готовий бізнес, торгова площа і т.д.">Спеціальне</label>
+                    <input asp-for="Filter.Office" id="ofisne" type="checkbox">
+                    <label for="ofisne" class="content-label" title="Призначене для ведення бізнесу">Офісне</label>
+                </div>
+            </div>
+            <hr />
+            <div class="category-dropdown">
+                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Тип пропозиції</button>
+                <div class="content">
+                    <input asp-for="Filter.FromOwner" id="vidvlasnyka" type="checkbox">
+                    <label for="vidvlasnyka" class="content-label">Від власника</label>
+                    <input asp-for="Filter.FromAgent" id="vidposerednyka" type="checkbox">
+                    <label for="vidposerednyka" class="content-label">Від посередника</label>
+                    <input asp-for="Filter.FromBuilder" id="vidzabydovnyka" type="checkbox">
+                    <label for="vidzabydovnyka" class="content-label">Від забудовника</label>
+                </div>
+            </div>
+            <hr />
+            <div class="category-dropdown">
+                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Площа</button>
+                <div class="content">
+                    <input asp-for="Filter.SquareFrom" value=@(Model.Filter.SquareFrom == 0 ? "" : Model.Filter.SquareFrom) onkeypress="return event.charCode>=48 && event.charCode<=57" type="text" placeholder="Площа від" class="square-input">
+                    <input asp-for="Filter.SquareUpTo" value=@(Model.Filter.SquareUpTo == int.MaxValue ? "" : Model.Filter.SquareUpTo) onkeypress="return event.charCode>=48 && event.charCode<=57" type="text" placeholder="Площа до" class="square-input">
+                </div>
+            </div>
+            <hr />
+            <div class="category-dropdown">
+                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Додаткова інформація</button>
+                <div class="content">
+                    <input asp-for="Filter.HasFurniture" id="mebli" type="checkbox">
+                    <label for="mebli" class="content-label">Присутні меблі або обладнання</label>
+                </div>
+            </div>
+            <hr />
+            <div class="category-dropdown">
+                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Перевірено</button>
+                <div class="content">
+                    <input asp-for="Filter.VideoChecked" id="videocheck" type="checkbox">
+                    <label for="videocheck" class="content-label">Перевірено по відеозвінку</label>
+                    <input asp-for="Filter.ExpertChecked" id="livecheck" type="checkbox">
+                    <label for="livecheck" class="content-label">Перевірено експертом</label>
+                </div>
+            </div>
+            <hr />
+            <div class="clear-filters">
+                <button asp-page-handler="ClearFilter" type="submit" class="btn-clear btn btn-danger">Скинути</button>
+            </div>
+        </form>
+    </div>
+    <div class="div-with-tip">
+        @if (Model.Advertisments == null || Model.Advertisments.Count == 0)
+        {
+            <div class="find-tip">Не знайдено оголошень.</div>
+        }
+        else
+        {
+            <div class="main-adv">
+                <div class="slide-buttons">
+                    <form method="post">
+                        <button asp-page-handler="PrevSlide" class="slide-btn" type="submit" style=@(Model.SlideId == 0 ? "display: none" : "display: block")>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z" />
+                            </svg>
+                        </button>
+                    </form>
+                    <div class="find-tip">
+                        <div class="advice-count">
+                            Оголошення <strong>@(@Model.SlideId + 1)</strong> з <strong>@Model.Advertisments.Count</strong>
+                        </div>
+                        <form method="post">
+                            <div class="go-to-div">
+                                <span>Перейти до #</span>
+                                <input type="text" class="go-to-id" value=@(Model.GoToSlideId != 0 ? Model.GoToSlideId : "") placeholder="1" asp-for="GoToSlideId" onkeypress="return event.charCode>=48 && event.charCode<=57" maxlength="4" id="input-goto-advice" required />
+                                <button asp-page-handler="GoToAdvice" id="btn-go-to" type="submit" class="btn btn-success" title="Відкрити оголошення">
+                                    &#10004;
+                                </button>
+                                @if (Model.GoToSlideId != null && Model.GoToSlideId != 0)
+                                {
+                                    <button asp-page-handler="ClearGoTo" type="submit" class="btn btn-danger" title="Повернутися до пошуку">
+                                        &#x2718;
+                                    </button>
+                                }
+                            </div>
+                        </form>
+                    </div>
+                    <form method="post">
+                        <button asp-page-handler="NextSlide" class="slide-btn" type="submit" style=@(Model.SlideId == Model.Advertisments.Count - 1 ? "display: none" : "display: block")>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="slide-advice">
+                    <div class="slide-info">
+                        <div style="display:flex; align-items: center;gap: 5px;">
+                            <div id="id">#@Model.Advertisment.Id</div>
+                            @{
+                                NumberFormatInfo nfi = new NumberFormatInfo();
+                                nfi.CurrencySymbol = "";
+                                nfi.CurrencyDecimalDigits = 0;
+                                string formattedPrice = (Model.Advertisment.Price * Model.Advertisment.Square).ToString("C", nfi);
+                            }
+                            <div id="info-price">@formattedPrice<span id="currency">грн/місяць</span></div>
+                        </div>
+                        <div id="info-street">@Model.Advertisment.FullStreetName</div>
+                        <div id="info-location">@Model.Advertisment.Region | м. @Model.Advertisment.City</div>
+                        <div style="display: flex;">
+                            <div class="info-details">
+                                <h3>Опис</h3>
+                                <div class="detail-tables">
+                                    <div class="details-table">
+                                        <div class="detail-name">Площа: </div>
+                                        <div class="detail-value">@Model.Advertisment.Square м<sup>2</sup></div>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(Model.Advertisment.OperationType))
+                                    {
+                                        <div class="details-table">
+                                            <div class="detail-name">Тип операції: </div>
+                                            <div class="detail-value">@Model.Advertisment.OperationType</div>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.Advertisment.PropertyType))
+                                    {
+                                        <div class="details-table">
+                                            <div class="detail-name">Тип нерухомості: </div>
+                                            <div class="detail-value">@Model.Advertisment.PropertyType</div>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.Advertisment.BuildingType))
+                                    {
+                                        <div class="details-table">
+                                            <div class="detail-name">Тип приміщення: </div>
+                                            <div class="detail-value">@Model.Advertisment.BuildingType</div>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.Advertisment.OfferType))
+                                    {
+                                        <div class="details-table">
+                                            <div class="detail-name">Тип пропозиції: </div>
+                                            <div class="detail-value">@Model.Advertisment.OfferType</div>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.Advertisment.Furniture))
+                                    {
+                                        <div class="details-table">
+                                            <div class="detail-name">Меблі або обладнання: </div>
+                                            <div class="detail-value">@Model.Advertisment.Furniture</div>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.Advertisment.AdditionalInformation))
+                                    {
+                                        <div class="details-table">
+                                            <div class="detail-name">Додаткова інформація: </div>
+                                            <div class="detail-value">@Model.Advertisment.AdditionalInformation</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="info-details">
+                                <h4>Контакти</h4>
+                                <div class="contact-tables">
+                                    <div class="details-table">
+                                        <div class="detail-name">Автор: </div>
+                                        <div class="detail-value">@Model.SlideOwner.Name</div>
+                                    </div>
+                                    <div class="details-table">
+                                        <div class="detail-name">Телефон: </div>
+                                        <div class="detail-value">@($"+38 {Model.SlideOwner.PhoneNumber}")</div>
+                                    </div>
+                                    <div class="details-table">
+                                        <div class="detail-name">Електронна пошта: </div>
+                                        <div class="detail-value">@Model.SlideOwner.Email</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.Advertisment.Checked.Equals("Перевірено експертом"))
+                        {
+                            <div class="verified-by-green" title="Перевірено експертом">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#1B9C85" class="bi bi-file-earmark-check-fill" viewBox="0 0 16 16">
+                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zm1.354 4.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708.708z" />
+                                </svg>
+                            </div>
+                        }
+                        else if (Model.Advertisment.Checked.Equals("Перевірено по відеозвінку"))
+                        {
+                            <div class="verified-by-yellow" title="Перевірено по відеозвінку">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#FFD93D" class="bi bi-file-earmark-play-fill" viewBox="0 0 16 16">
+                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM6 6.883a.5.5 0 0 1 .757-.429l3.528 2.117a.5.5 0 0 1 0 .858l-3.528 2.117a.5.5 0 0 1-.757-.43V6.884z" />
+                                </svg>
+                            </div>
+                        }
+                        else if (Model.Advertisment.Checked.Equals("Не перевірено"))
+                        {
+                            <div class="verified-by-red" title="Не перевірено">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#F45050" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64z" />
+                                </svg>
+                            </div>
+                        }
+                        <div class="go-to-adv">
+                            <div class="modal" id="modal-rent">
+                                <div class="modal-content">
+                                    <span>
+                                        Ви хочете орендувати #@Model.Advertisment.Id?
+                                    </span>
+                                    <div class="modal-buttons">
+                                        <form method="post">
+                                            <button asp-page-handler="Rent" asp-route-id="@Model.Advertisment.Id" type="submit" class="btn btn-success">
+                                                Так
+                                            </button>
+                                        </form>
+                                        <button onclick="closeModal('modal-rent')" type="submit" class="btn btn-danger">
+                                            Ні
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" id="modal-open" onclick="openModal('modal-rent')" class="btn btn-success">Орендувати</button>
+                        </div>
+                    </div>
+                    <div class="slide-images">
+                        <h3>Зображення</h3>
+                        @for (int i = 0; i < 3 && i < Model.Images.Count; i++)
+                        {
+                            string base64String = Convert.ToBase64String(Model.Images.ElementAt(i).Content, 0, Model.Images.ElementAt(i).Content.Length);
+                            <div class="main-image">
+                                <img src="@("data:image/png;base64," + base64String)" width="100%" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,132 @@
+﻿@page
+@using CommercialRental.Models;
+
+@inject CommercialRental.Data.ApplicationDbContext _context
+
+@model IndexModel
+@{
+    ViewData["Title"] = "Оренда нерухомості";
+    Layout = "_Layout";
+
+    <link rel="stylesheet" href="~/css/Index.css" />
+    <link rel="stylesheet" href="https://openlayers.org/en/v6.6.1/css/ol.css" type="text/css" />
+
+    <style>
+        .map {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="https://openlayers.org/en/v6.6.1/build/ol.js"></script>
+
+    List<Advertisment> advs = new List<Advertisment>();
+    List<string> regions = new List<string>();
+    if (_context.Advertisments.Any())
+    {
+        advs = _context.Advertisments.ToList();
+        regions = advs.Select(r => r.Region).Distinct().ToList();
+    }
+}
+
+<div class="main-div">
+    <div class="main-grid" id="main-grid">
+        <a asp-page="search" style="text-decoration:none">
+            <div class=" grid-element">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+                пошук нерухомості
+            </div>
+        </a>
+        <a asp-page="mylist" style="text-decoration:none">
+            <div class=" grid-element">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16" style="margin-bottom: 5px">
+                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z" />
+                </svg>
+                мої оголошення
+            </div>
+        </a>
+        <a asp-page="create" style="text-decoration:none">
+            <div class=" grid-element">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                </svg>
+                створити оголошення
+            </div>
+        </a>
+    </div>
+    <div class="main-advice" id="main-advice">
+        <div class="map-info">
+            <h3>
+                <span>@(advs.Count % 10)</span>+ оголошень в більш ніж <span>@regions.Count</span> областях!
+            </h3>
+            <h6><strong>Створюйте</strong> оголошення, <strong>шукайте</strong> за допомогою фільтрів, <strong>керуйте</strong> своєю нерухомістю в одному додатку.<br /><span> "Все так душевно, по-домашньому."</span> </h6>
+        </div>
+        <div class="map-div">
+            <div id="map" class="map"></div>
+            <script>
+                var map = new ol.Map({
+                    target: 'map',
+                    layers: [
+                        new ol.layer.Tile({
+                            source: new ol.source.OSM(),
+                        }),
+                    ],
+                    view: new ol.View({
+                        center: ol.proj.fromLonLat([32.018089074676344, 48.53884084586366]),
+                        zoom: 6,
+                    }),
+                });
+
+                var markerStyle = new ol.style.Style({
+                    image: new ol.style.Icon({
+                        anchor: [0.5, 1],
+                        src: '@Url.Content("~/images/marker.png")',
+                    }),
+                });
+
+                var featuresArray = [];
+
+                var regionsArray = @Html.Raw(Json.Serialize(regions));
+                for (var itm = 0; itm < regionsArray.length; itm++) {
+                    var region = regionsArray[itm];
+
+                    var fetchPr = fetch('https://api.opencagedata.com/geocode/v1/json?q=' + region + '&key=c3df455524594b77bd5e07f85260cadb')
+                        .then(response => response.json())
+                        .then(data => {
+                            // Extract latitude and longitude from the response
+                            const result = data.results[0];
+                            latitude = result.geometry.lat;
+                            longitude = result.geometry.lng;
+                        })
+                        .catch(error => {
+                            console.log('Error:', error);
+                        });
+
+                    fetchPr.then(() => {
+                        var newMarker = new ol.Feature({
+                            geometry: new ol.geom.Point(ol.proj.fromLonLat([longitude, latitude])),
+                        });
+
+                        newMarker.setStyle(markerStyle);
+                        featuresArray.push(newMarker);
+
+                        if (featuresArray.length === regionsArray.length) {
+                            console.log(featuresArray);
+                            var vectorSource = new ol.source.Vector({
+                                features: featuresArray,
+                            });
+
+                            var vectorLayer = new ol.layer.Vector({
+                                source: vectorSource,
+                            });
+
+                            map.addLayer(vectorLayer);
+                        }
+                    });
+                }
+            </script>
+        </div>
+    </div>
+</div>
