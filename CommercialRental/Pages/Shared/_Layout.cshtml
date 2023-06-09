@@ -21,17 +21,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - RentIt</title>
 
-    <environment include="Development">
+    @* <environment include="Development"> *@
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
         <link rel="stylesheet" href="~/css/_Layout.css" />
-    </environment>
+    @* </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    </environment>
+    </environment> *@
 </head>
 <body>
     <header>
@@ -97,9 +97,8 @@
                     }
                     else if (userManager.IsInRoleAsync(user, "Admin").Result)
                     {
-                        var notChecked = _context.RequestsRent
-                        .Include(a => a.RequestAdvertisment)
-                        .Where(a => a.RequestAdvertisment.Checked.Equals("Не перевірено"))
+                        var notChecked = _context.Advertisments
+                        .Where(a => a.Checked.Equals("Не перевірено"))
                         .ToList();
 
                         <div class="bg-light" style="display: flex; align-items: center; gap: 3px;height: 40px; padding: 0 5px; border-radius: 5px;" title="Потребують перевірки експерта">
@@ -109,7 +108,7 @@
                             </svg>
                             @notChecked.Count
                         </div>
-                        <a asp-area="Moderation" asp-page="/Manage" style="text-decoration: none; color:white;" title="Модерація оголошень">
+                        <a asp-page="/Manage" style="text-decoration: none; color:white;" title="Модерація оголошень">
                             <button type="button" class="btn btn-secondary" style="height: 40px;display: flex; align-items: center; gap: 5px;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
                                     <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"></path>

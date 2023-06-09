@@ -32,3 +32,56 @@ if (phoneReg) {
         event.target.value = formattedPhoneNumber;
     });
 }
+
+function getCitiesByRegion() {
+    const regionSelect = document.getElementById("region-select");
+    const citySelect = document.getElementById("city-select");
+
+    const region = regionSelect.value;
+
+    const jsonPath = window.location.origin + `/json/cities.json`;
+    fetch(jsonPath)
+        .then(response => response.json())
+        .then(data => {
+            const regionCities = data.filter(city => city.region === region);
+
+            citySelect.innerHTML = "";
+
+            if (regionCities.length === 0) {
+                const defaultOption = document.createElement("option");
+                defaultOption.value = "";
+                defaultOption.text = "Виберіть область";
+                citySelect.add(defaultOption);
+            }
+            else {
+                regionCities.forEach((city, index) => {
+                    const option = document.createElement("option");
+                    option.value = city.name;
+                    option.text = city.name;
+                    if (index == 0) {
+                        option.selected = true;
+                    }
+                    citySelect.add(option);
+
+                    const storedCity = localStorage.getItem("selectedCity");
+                    if (storedCity === city.name) {
+                        option.selected = true;
+                    }
+                });
+            }
+        })
+        .catch(error => console.error("Error:", error));
+}
+
+function removeFields() {
+    localStorage.removeItem("selectedCity");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    getCitiesByRegion();
+});
+
+document.getElementById("city-select").addEventListener("change", function () {
+    const selectedCity = this.value;
+    localStorage.setItem("selectedCity", selectedCity);
+});

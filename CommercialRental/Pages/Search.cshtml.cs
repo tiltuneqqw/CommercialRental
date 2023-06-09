@@ -173,6 +173,16 @@ namespace CommercialRental.Pages
                             Images = _context.Files.Where(i => i.AdvertismentId.Equals(Advertisment.Id)).ToList();
                         }
                     }
+
+                    if (Advertisment == null)
+                    {
+                        GoToSlideId = 0;
+                        SlideId = 0;
+                        WebCache.Set("id", 0);
+                        WebCache.Set("gotoid", 0);
+
+                        OnPageLoad();
+                    }
                 }
             }
         }
@@ -263,7 +273,7 @@ namespace CommercialRental.Pages
                 return NotFound();
             }
 
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
             {
                 var reqs = await _context.RequestsRent
                     .Where(i => i.AdvertismentId.Equals(id))

@@ -169,7 +169,7 @@ namespace CommercialRental.Pages
                 adv.IsRented = false;
 
                 _context.RequestsRent.Remove(req);
-                await _context.SaveChangesAsync();
+                _context.
 
                 Collapsed = 1;
                 LoadArrays();

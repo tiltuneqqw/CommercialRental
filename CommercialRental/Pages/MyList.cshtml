@@ -195,22 +195,20 @@
                         <div class="detail-name">Дата запиту: </div>
                         <div class="detail-value">@request.RequestDate.ToShortDateString()</div>
                     </div>
-                    <div class="buttons-rent">
-                        <div class="allow-adv">
-                            <form method="post">
+                    <form method="post">
+                        <div class="buttons-rent">
+                            <div class="allow-adv">
                                 <button asp-page-handler="Rent" asp-route-id="@request.AdvertismentId" type="submit" class="btn btn-success btn-allow-adv">
                                     Здати в оренду
                                 </button>
-                            </form>
-                        </div>
-                        <div class="allow-adv">
-                            <form method="post">
+                            </div>
+                            <div class="allow-adv">
                                 <button asp-page-handler="DenyRent" asp-route-id="@request.Id" type="submit" class="btn btn-danger btn-allow-adv">
                                     Відмовити
                                 </button>
-                            </form>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             }
         }
@@ -248,7 +246,7 @@
                         {
                             string base64String = Convert.ToBase64String(image.Content, 0, image.Content.Length);
                             <div class="main-image">
-                                <img src="@("data:image/png;base64," + base64String)" onclick="modalOnClick()" id="myImg" height="100%"/>
+                                <img src="@("data:image/png;base64," + base64String)" onclick="modalOnClick()" id="myImg" height="100%" />
                             </div>
                         }
                     }

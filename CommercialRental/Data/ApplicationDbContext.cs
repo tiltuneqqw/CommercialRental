@@ -12,6 +12,7 @@ namespace CommercialRental.Data
         public DbSet<User> Users { get; set; }
         public DbSet<RequestRent> RequestsRent { get; set; }
         public DbSet<AppFile> Files { get; set; }
+        public int Collapsed { get; internal set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

@@ -95,7 +95,6 @@
                     var fetchPr = fetch('https://api.opencagedata.com/geocode/v1/json?q=' + region + '&key=c3df455524594b77bd5e07f85260cadb')
                         .then(response => response.json())
                         .then(data => {
-                            // Extract latitude and longitude from the response
                             const result = data.results[0];
                             latitude = result.geometry.lat;
                             longitude = result.geometry.lng;

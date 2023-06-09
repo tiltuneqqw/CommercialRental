@@ -1,1 +1,58 @@
-﻿
+﻿.moderation-main {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.moderation-item {
+    width: 100%;
+    display: flex;
+}
+
+.moderation-item id {
+    width: 50px;
+    font-weight: 900;
+}
+
+.moderation-item strong {
+    width: 100px;
+}
+
+.moderation-item span {
+    width: 35%;
+}
+
+.moderation-item-hidden {
+    display: none;
+    width: 100%;
+    height: 400px;
+}
+
+.item-images {
+    height: 350px;
+    width: 100%;
+}
+
+.delete-adv {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    padding-top: 250px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    backdrop-filter: blur(10px);
+    z-index: 15;
+}
+
+.delete-adv-inside {
+    margin: auto;
+    text-align: center;
+    width: 230px;
+    background-color: #f5f5f5;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 20px;
+    z-index: 16;
+}

@@ -1,0 +1,78 @@
+﻿@page "/moderation/manage"
+@using System.Globalization;
+@model ManageModel
+@{
+    ViewData["Title"] = "Модерація оголошень";
+    Layout = "/Pages/Shared/_Layout.cshtml";
+
+    <link rel="stylesheet" href="~/css/manage.css" />
+    <script src="~/js/manage.js" asp-append-version="true"></script>
+}
+
+<div class="moderation-main">
+    @if (Model.Advertisments.Count == 0)
+    {
+        <h1>Відсутні оголошення.</h1>
+    }
+    @foreach (var item in Model.Advertisments)
+    {
+        <div class="moderation-item">
+            <id>#@item.Id</id>
+            <strong>
+                @{
+                    NumberFormatInfo nfi = new NumberFormatInfo();
+                    nfi.CurrencySymbol = "";
+                    nfi.CurrencyDecimalDigits = 0;
+                    string formattedPrice = (item.Price * item.Square).ToString("C", nfi);
+                }
+                @formattedPrice&#8372;
+            </strong>
+            <span>@item.Region | @item.City | @item.FullStreetName</span>
+            <span>@item.User.Name | @item.User.PhoneNumber | @item.User.Email</span>
+            <form method="post">
+                <div style="display: flex;">
+                    <select class="form-control select-field" name="selectedValue">
+                        <option value="@item.Checked" disabled="disabled" selected="selected">@item.Checked</option>
+                        <option value="Перевірено експертом">Перевірено експертом</option>
+                        <option value="Перевірено по відеозвінку">Перевірено по відеозвінку</option>
+                        <option value="Не перевірено">Не перевірено</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="SaveChecked" asp-route-id="@item.Id">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-symlink-fill" viewBox="0 0 16 16">
+                            <path d="M13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2l.04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14h10.348a2 2 0 0 0 1.991-1.819l.637-7A2 2 0 0 0 13.81 3zM2.19 3c-.24 0-.47.042-.683.12L1.5 2.98a1 1 0 0 1 1-.98h3.672a1 1 0 0 1 .707.293L7.586 3H2.19zm9.608 5.271-3.182 1.97c-.27.166-.616-.036-.616-.372V9.1s-2.571-.3-4 2.4c.571-4.8 3.143-4.8 4-4.8v-.769c0-.336.346-.538.616-.371l3.182 1.969c.27.166.27.576 0 .742z" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            <button class="btn btn-danger" type="button" onclick="showModal('@item.Id')">
+                &#x58;
+            </button>
+        </div>
+        <form method="post">
+            <div id="@item.Id" class="delete-adv">
+                <div class="delete-adv-inside">
+                    <span>Ви хочете видалити оголошення #@item.Id?</span>
+                    <button type="submit" class="btn btn-success" asp-page-handler="RemoveAdv" asp-route-id="@item.Id">Так</button>
+                    <button type="button" class="btn btn-danger" onclick="hideModal('@item.Id')">Ні</button>
+                </div>
+            </div>
+        </form>
+    }
+    <div>
+        @{
+            var prevDisabled = !Model.Advertisments.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.Advertisments.HasNextPage ? "disabled" : "";
+        }
+
+        <a asp-page="/Manage"
+           asp-route-pageIndex="@(Model.Advertisments.PageIndex - 1)"
+           class="btn btn-primary @prevDisabled">
+            Минула сторінка
+        </a>
+        <a asp-page="/Manage"
+           asp-route-pageIndex="@(Model.Advertisments.PageIndex + 1)"
+           class="btn btn-primary @nextDisabled">
+            Наступна сторінка
+        </a>
+    </div>
+</div>

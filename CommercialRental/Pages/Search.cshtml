@@ -13,120 +13,141 @@
 }
 
 <div class="filter-main">
-    <div class="sidebar-category">
-        <h4 style="text-align: center; font-weight: 600;">
+    <div class="filter-name">
+        <div class="filter-name-text">
             Фільтр
-        </h4>
-        <form method="post">
-            <div class="apply-filters">
-                <button type="submit" asp-page-handler="ApplyFilter" class="btn-apply btn btn-success">Застосувати</button>
-            </div>
-            <hr />
-            <div class="category-dropdown">
-                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Область</button>
-                <div class="content">
-                    <select asp-for="Filter.Region" id="region-select">
-                        <option value="" disabled="disabled" selected="selected">Виберіть область</option>
-                        <option value="Київська область">Київська область</option>
-                        <option value="Рівненська область">Рівненська область</option>
-                        <option value="Івано-Франківська область">Івано-Франківська область</option>
-                    </select>
+        </div>
+        <div class="sidebar-category">
+            <form method="post">
+                <div class="apply-filters">
+                    <button type="submit" asp-page-handler="ApplyFilter" class="btn-apply btn btn-primary">Застосувати</button>
                 </div>
-            </div>
-            <hr />
-            <div class="category-dropdown">
-                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Місто</button>
-                <div class="content">
-                    <select asp-for="Filter.City" id="city-select">
-                        <option value="" disabled="disabled" selected="selected">Виберіть місто</option>
-                        <option value="Київ">Київ</option>
-                        <option value="Рівне">Рівне</option>
-                        <option value="Івано-Франківськ">Івано-Франківськ</option>
-                    </select>
+                <hr />
+                <div class="category-dropdown">
+                    <button type="button" class="collapsible">Область</button>
+                    <div class="content">
+                        <select asp-for="Filter.Region" id="region-select" onchange="getCitiesByRegion()">
+                            <option value="" selected="selected" disabled="disabled">Виберіть область:</option>
+                            <option value="Київська область">Київська область</option>
+                            <option value="Рівненська область">Рівненська область</option>
+                            <option value="Харківська область">Харківська область</option>
+                            <option value="Вінницька область">Вінницька область</option>
+                            <option value="Волинська область">Волинська область</option>
+                            <option value="Дніпропетровська область">Дніпропетровська область</option>
+                            <option value="Івано-Франківська область">Івано-Франківська область</option>
+                            <option value="Донецька область">Донецька область</option>
+                            <option value="Житомирська область">Житомирська область</option>
+                            <option value="Закарпатська область">Закарпатська область</option>
+                            <option value="Запорізька область">Запорізька область</option>
+                            <option value="Кіровоградська область">Кіровоградська область</option>
+                            <option value="Луганська область">Луганська область</option>
+                            <option value="Львівська область">Львівська область</option>
+                            <option value="Миколаївська область">Миколаївська область</option>
+                            <option value="Одеська область">Одеська область</option>
+                            <option value="Полтавська область">Полтавська область</option>
+                            <option value="Сумська область">Сумська область</option>
+                            <option value="Тернопільська область">Тернопільська область</option>
+                            <option value="Херсонська область">Херсонська область</option>
+                            <option value="Хмельницька область">Хмельницька область</option>
+                            <option value="Черкаська область">Черкаська область</option>
+                            <option value="Чернівецька область">Чернівецька область</option>
+                            <option value="Чернігівська область">Чернігівська область</option>
+                            <option value="Автономна Республіка Крим">Автономна Республіка Крим</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <hr />
-            <div class="category-dropdown">
-                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Тип операції</button>
-                <div class="content">
-                    <input asp-for="Filter.Sell" id="prodaty" type="checkbox">
-                    <label for="prodaty" class="content-label">Продати</label>
-                    <input asp-for="Filter.LongTerm" id="dovgostrokovo" type="checkbox">
-                    <label for="dovgostrokovo" class="content-label">Довгостроково</label>
-                    <input asp-for="Filter.Daily" id="podobovo" type="checkbox">
-                    <label for="podobovo" class="content-label">Подобово</label>
+                <hr />
+                <div class="category-dropdown">
+                    <button type="button" class="collapsible">Місто</button>
+                    <div class="content">
+                        <select asp-for="Filter.City" id="city-select">
+                            <option disabled="disabled" value="" selected="selected">Спершу виберіть регіон</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <hr />
-            <div class="category-dropdown">
-                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Тип нерухомості</button>
-                <div class="content">
-                    <input asp-for="Filter.NewBulding" id="novobydova" type="checkbox">
-                    <label for="novobydova" class="content-label">Новобудова</label>
-                    <input asp-for="Filter.Secondary" id="vtorynne" type="checkbox">
-                    <label for="vtorynne" class="content-label">Вторинна</label>
+                <hr />
+                <div class="category-dropdown">
+                    <button type="button" class="collapsible">Тип операції</button>
+                    <div class="content">
+                        <input asp-for="Filter.Sell" id="prodaty" type="checkbox">
+                        <label for="prodaty" class="content-label">Продати</label>
+                        <input asp-for="Filter.LongTerm" id="dovgostrokovo" type="checkbox">
+                        <label for="dovgostrokovo" class="content-label">Довгостроково</label>
+                        <input asp-for="Filter.Daily" id="podobovo" type="checkbox">
+                        <label for="podobovo" class="content-label">Подобово</label>
+                    </div>
                 </div>
-            </div>
-            <hr />
-            <div class="category-dropdown">
-                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Тип приміщення</button>
-                <div class="content">
-                    <input asp-for="Filter.Commercial" id="komerciine" type="checkbox">
-                    <label for="komerciine" class="content-label" title="Виробниче, складське або приміщення вільного призначення">Комерційне</label>
-                    <input asp-for="Filter.Special" id="specialne" type="checkbox">
-                    <label for="specialne" class="content-label" title="Бари, кафе, ресторани, готовий бізнес, торгова площа і т.д.">Спеціальне</label>
-                    <input asp-for="Filter.Office" id="ofisne" type="checkbox">
-                    <label for="ofisne" class="content-label" title="Призначене для ведення бізнесу">Офісне</label>
+                <hr />
+                <div class="category-dropdown">
+                    <button type="button" class="collapsible">Тип нерухомості</button>
+                    <div class="content">
+                        <input asp-for="Filter.NewBulding" id="novobydova" type="checkbox">
+                        <label for="novobydova" class="content-label">Новобудова</label>
+                        <input asp-for="Filter.Secondary" id="vtorynne" type="checkbox">
+                        <label for="vtorynne" class="content-label">Вторинна</label>
+                    </div>
                 </div>
-            </div>
-            <hr />
-            <div class="category-dropdown">
-                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Тип пропозиції</button>
-                <div class="content">
-                    <input asp-for="Filter.FromOwner" id="vidvlasnyka" type="checkbox">
-                    <label for="vidvlasnyka" class="content-label">Від власника</label>
-                    <input asp-for="Filter.FromAgent" id="vidposerednyka" type="checkbox">
-                    <label for="vidposerednyka" class="content-label">Від посередника</label>
-                    <input asp-for="Filter.FromBuilder" id="vidzabydovnyka" type="checkbox">
-                    <label for="vidzabydovnyka" class="content-label">Від забудовника</label>
+                <hr />
+                <div class="category-dropdown">
+                    <button type="button" class="collapsible">Тип приміщення</button>
+                    <div class="content">
+                        <input asp-for="Filter.Commercial" id="komerciine" type="checkbox">
+                        <label for="komerciine" class="content-label" title="Виробниче, складське або приміщення вільного призначення">Комерційне</label>
+                        <input asp-for="Filter.Special" id="specialne" type="checkbox">
+                        <label for="specialne" class="content-label" title="Бари, кафе, ресторани, готовий бізнес, торгова площа і т.д.">Спеціальне</label>
+                        <input asp-for="Filter.Office" id="ofisne" type="checkbox">
+                        <label for="ofisne" class="content-label" title="Призначене для ведення бізнесу">Офісне</label>
+                    </div>
                 </div>
-            </div>
-            <hr />
-            <div class="category-dropdown">
-                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Площа</button>
-                <div class="content">
-                    <input asp-for="Filter.SquareFrom" value=@(Model.Filter.SquareFrom == 0 ? "" : Model.Filter.SquareFrom) onkeypress="return event.charCode>=48 && event.charCode<=57" type="text" placeholder="Площа від" class="square-input">
-                    <input asp-for="Filter.SquareUpTo" value=@(Model.Filter.SquareUpTo == int.MaxValue ? "" : Model.Filter.SquareUpTo) onkeypress="return event.charCode>=48 && event.charCode<=57" type="text" placeholder="Площа до" class="square-input">
+                <hr />
+                <div class="category-dropdown">
+                    <button type="button" class="collapsible">Тип пропозиції</button>
+                    <div class="content">
+                        <input asp-for="Filter.FromOwner" id="vidvlasnyka" type="checkbox">
+                        <label for="vidvlasnyka" class="content-label">Від власника</label>
+                        <input asp-for="Filter.FromAgent" id="vidposerednyka" type="checkbox">
+                        <label for="vidposerednyka" class="content-label">Від посередника</label>
+                        <input asp-for="Filter.FromBuilder" id="vidzabydovnyka" type="checkbox">
+                        <label for="vidzabydovnyka" class="content-label">Від забудовника</label>
+                    </div>
                 </div>
-            </div>
-            <hr />
-            <div class="category-dropdown">
-                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Додаткова інформація</button>
-                <div class="content">
-                    <input asp-for="Filter.HasFurniture" id="mebli" type="checkbox">
-                    <label for="mebli" class="content-label">Присутні меблі або обладнання</label>
+                <hr />
+                <div class="category-dropdown">
+                    <button type="button" class="collapsible">Площа</button>
+                    <div class="content">
+                        <input asp-for="Filter.SquareFrom" value=@(Model.Filter.SquareFrom == 0 ? "" : Model.Filter.SquareFrom) onkeypress="return event.charCode>=48 && event.charCode<=57" type="text" placeholder="Площа від" class="square-input">
+                        <input asp-for="Filter.SquareUpTo" value=@(Model.Filter.SquareUpTo == int.MaxValue ? "" : Model.Filter.SquareUpTo) onkeypress="return event.charCode>=48 && event.charCode<=57" type="text" placeholder="Площа до" class="square-input">
+                    </div>
                 </div>
-            </div>
-            <hr />
-            <div class="category-dropdown">
-                <button onclick="toggleNearestDiv(this)" type="button" class="collapsible">Перевірено</button>
-                <div class="content">
-                    <input asp-for="Filter.VideoChecked" id="videocheck" type="checkbox">
-                    <label for="videocheck" class="content-label">Перевірено по відеозвінку</label>
-                    <input asp-for="Filter.ExpertChecked" id="livecheck" type="checkbox">
-                    <label for="livecheck" class="content-label">Перевірено експертом</label>
+                <hr />
+                <div class="category-dropdown">
+                    <button type="button" class="collapsible">Додаткова інформація</button>
+                    <div class="content">
+                        <input asp-for="Filter.HasFurniture" id="mebli" type="checkbox">
+                        <label for="mebli" class="content-label">Присутні меблі або обладнання</label>
+                    </div>
                 </div>
-            </div>
-            <hr />
-            <div class="clear-filters">
-                <button asp-page-handler="ClearFilter" type="submit" class="btn-clear btn btn-danger">Скинути</button>
-            </div>
-        </form>
+                <hr />
+                <div class="category-dropdown">
+                    <button type="button" class="collapsible">Перевірено</button>
+                    <div class="content">
+                        <input asp-for="Filter.VideoChecked" id="videocheck" type="checkbox">
+                        <label for="videocheck" class="content-label">Перевірено по відеозвінку</label>
+                        <input asp-for="Filter.ExpertChecked" id="livecheck" type="checkbox">
+                        <label for="livecheck" class="content-label">Перевірено експертом</label>
+                    </div>
+                </div>
+                <hr />
+                <div class="clear-filters">
+                    <button asp-page-handler="ClearFilter" onclick="removeFields()" type="submit" class="btn-clear btn btn-danger">Скинути</button>
+                </div>
+            </form>
+        </div>
     </div>
     <div class="div-with-tip">
         @if (Model.Advertisments == null || Model.Advertisments.Count == 0)
         {
-            <div class="find-tip">Не знайдено оголошень.</div>
+            <div class="find-tip">Не знайдено оголошень.<br />Спробуйте задати інші фільтри.</div>
         }
         else
         {
@@ -147,7 +168,7 @@
                             <div class="go-to-div">
                                 <span>Перейти до #</span>
                                 <input type="text" class="go-to-id" value=@(Model.GoToSlideId != 0 ? Model.GoToSlideId : "") placeholder="1" asp-for="GoToSlideId" onkeypress="return event.charCode>=48 && event.charCode<=57" maxlength="4" id="input-goto-advice" required />
-                                <button asp-page-handler="GoToAdvice" id="btn-go-to" type="submit" class="btn btn-success" title="Відкрити оголошення">
+                                <button asp-page-handler="GoToAdvice" id="btn-go-to" type="submit" class="btn btn-outline-success" title="Відкрити оголошення">
                                     &#10004;
                                 </button>
                                 @if (Model.GoToSlideId != null && Model.GoToSlideId != 0)
@@ -181,7 +202,7 @@
                         </div>
                         <div id="info-street">@Model.Advertisment.FullStreetName</div>
                         <div id="info-location">@Model.Advertisment.Region | м. @Model.Advertisment.City</div>
-                        <div style="display: flex;">
+                        <div style="display: flex; margin-top: 50px;">
                             <div class="info-details">
                                 <h3>Опис</h3>
                                 <div class="detail-tables">
