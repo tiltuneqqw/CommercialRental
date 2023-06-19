@@ -11,7 +11,7 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using CommercialRental.Data;
-using CommercialRental.Models;
+using CommercialRental.Data.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -22,7 +22,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
-namespace CommercialRental.Areas.Identity.Pages.Account
+namespace CommercialRental.Pages.Identity.Account
 {
     public class RegisterModel : PageModel
     {
@@ -157,7 +157,7 @@ namespace CommercialRental.Areas.Identity.Pages.Account
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
                     }
                     else
                     {

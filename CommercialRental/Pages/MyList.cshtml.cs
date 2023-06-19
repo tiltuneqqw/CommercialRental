@@ -1,5 +1,5 @@
 using CommercialRental.Data;
-using CommercialRental.Models;
+using CommercialRental.Data.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -99,6 +99,7 @@ namespace CommercialRental.Pages
             var advs = _context.RequestsRent
                     .Where(a => a.AdvertismentId.Equals(id))
                     .ToList();
+
             if (entity == null)
             {
                 return NotFound();
@@ -160,7 +161,7 @@ namespace CommercialRental.Pages
                 return NotFound();
             }
 
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated ?? false)
             {
                 var adv = await _context.Advertisments.FindAsync(id);
                 var req = await _context.RequestsRent.FirstOrDefaultAsync(i => i.AdvertismentId.Equals(id));
@@ -168,8 +169,12 @@ namespace CommercialRental.Pages
                 adv.StartRentDate = DateTime.MinValue;
                 adv.IsRented = false;
 
-                _context.RequestsRent.Remove(req);
-                _context.
+                if (req != null)
+                {
+                    _context.RequestsRent.Remove(req);
+                }
+                _context.Advertisments.Remove(adv);
+                await _context.SaveChangesAsync();
 
                 Collapsed = 1;
                 LoadArrays();

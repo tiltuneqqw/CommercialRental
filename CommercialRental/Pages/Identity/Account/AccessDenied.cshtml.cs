@@ -2,9 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using CommercialRental;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CommercialRental.Areas.Identity.Pages.Account
+namespace CommercialRental.Pages.Identity.Account
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

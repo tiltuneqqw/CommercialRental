@@ -1,9 +1,12 @@
 using CommercialRental.Data;
-using CommercialRental.Models;
+using CommercialRental.Data.Models;
+using ContosoUniversity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Web.Helpers;
@@ -16,15 +19,16 @@ namespace CommercialRental.Pages
         private readonly ApplicationDbContext _context;
         [BindProperty]
         public List<Advertisment> Advertisments { get; set; }
-        public Advertisment Advertisment { get; set; }
-        public bool ShowContacts { get; set; }
-        public User SlideOwner { get; set; }
-        public int? SlideId { get; set; }
         [BindProperty]
-        public int? GoToSlideId { get; set; }
+        public Advertisment Advertisment { get; set; }
+        public int SlideId { get; set; }
+        [BindProperty]
+        public int GoToSlideId { get; set; }
         public List<AppFile> Images { get; set; }
         [BindProperty]
         public FilterModel Filter { get; set; }
+        public bool IsLast { get; set; }
+        public bool IsFirst { get; set; }
         public SearchModel(ApplicationDbContext context)
         {
             _context = context;
@@ -52,17 +56,19 @@ namespace CommercialRental.Pages
             public bool ExpertChecked { get; set; }
         }
 
-        public void OnGet()
+        public void OnGet(int addPage = 0)
         {
-            if (SlideId == null)
+            var slideId = WebCache.Get("id");
+            if (slideId == null)
             {
-                SlideId = WebCache.Get("id");
-                if (SlideId == null)
-                {
-                    SlideId = 0;
-                    WebCache.Set("id", SlideId);
-                }
+                SlideId = 0;
+                WebCache.Set("id", SlideId);
             }
+            else
+            {
+                SlideId = slideId + addPage;
+            }
+
             if (Filter == null)
             {
                 Filter = WebCache.Get("filter");
@@ -72,18 +78,19 @@ namespace CommercialRental.Pages
                     WebCache.Set("filter", Filter);
                 }
             }
-            if (GoToSlideId == null)
+
+            var gotoid = WebCache.Get("gotoid");
+            if (gotoid == null)
             {
-                GoToSlideId = WebCache.Get("gotoid");
-                if (GoToSlideId != null && GoToSlideId != 0)
-                {
-                    SlideId = 0;
-                    WebCache.Set("id", SlideId);
-                }
+                GoToSlideId = 0;
+                WebCache.Set("gotoid", GoToSlideId);
+            }
+            else
+            {
+                GoToSlideId = gotoid;
             }
 
             OnPageLoad();
-            LoadSlide(SlideId.Value);
         }
 
         private void OnPageLoad()
@@ -102,7 +109,16 @@ namespace CommercialRental.Pages
                     .Where(a => !reqsId.Contains(a.Id))
                     .ToList();
 
-                if (GoToSlideId == null || GoToSlideId == 0)
+                if (SlideId < 0)
+                {
+                    SlideId = 0;
+                }
+                if (SlideId >= advs.Count)
+                {
+                    SlideId = advs.Count - 1;
+                }
+
+                if (GoToSlideId == 0)
                 {
                     if (!string.IsNullOrEmpty(Filter.Region))
                     {
@@ -151,114 +167,95 @@ namespace CommercialRental.Pages
 
                     if (Advertisments.Any())
                     {
-                        Advertisment = Advertisments.ElementAt(SlideId.Value);
-                        SlideOwner = _context.Advertisments.Include(a => a.User).FirstOrDefault(a => a.Id == Advertisment.Id)?.User;
+                        Advertisment = Advertisments.ElementAt(SlideId);
 
                         if (_context.Files.Any(i => i.AdvertismentId.Equals(Advertisment.Id)))
                         {
                             Images = _context.Files.Where(i => i.AdvertismentId.Equals(Advertisment.Id)).ToList();
                         }
+                    }
+
+                    if (SlideId == 0)
+                    {
+                        IsFirst = true;
+                    }
+                    if (SlideId == advs.Count - 1)
+                    {
+                        IsLast = true;
                     }
                 }
                 else
                 {
-                    Advertisments = advs.Where(i => i.Id.Equals(GoToSlideId)).ToList();
-                    if (Advertisments.Any())
+                    Advertisment = advs.FirstOrDefault(i => i.Id.Equals(GoToSlideId));
+                    if (Advertisment != null && _context.Files.Any(i => i.AdvertismentId.Equals(Advertisment.Id)))
                     {
-                        Advertisment = Advertisments.ElementAt(0);
-                        SlideOwner = _context.Advertisments.Include(a => a.User).FirstOrDefault(a => a.Id == Advertisment.Id)?.User;
-
-                        if (_context.Files.Any(i => i.AdvertismentId.Equals(Advertisment.Id)))
-                        {
-                            Images = _context.Files.Where(i => i.AdvertismentId.Equals(Advertisment.Id)).ToList();
-                        }
+                        Images = _context.Files.Where(i => i.AdvertismentId.Equals(Advertisment.Id)).ToList();
                     }
 
-                    if (Advertisment == null)
-                    {
-                        GoToSlideId = 0;
-                        SlideId = 0;
-                        WebCache.Set("id", 0);
-                        WebCache.Set("gotoid", 0);
-
-                        OnPageLoad();
-                    }
+                    IsLast = true;
+                    IsFirst = true;
                 }
             }
         }
 
-        public async Task<IActionResult> OnPostNextSlide()
+        public IActionResult OnPostNextSlide()
         {
-            SlideId = WebCache.Get("id");
-            SlideId++;
-            if (SlideId == null)
+            var slideId = WebCache.Get("id");
+            if (slideId == null)
             {
                 SlideId = 0;
-            }
-            WebCache.Set("id", SlideId);
-
-            return RedirectToPage();
-        }
-
-        public async Task<IActionResult> OnPostPrevSlide()
-        {
-            SlideId = WebCache.Get("id");
-            SlideId--;
-            if (SlideId == null || SlideId < 0)
-            {
-                SlideId = 0;
-            }
-            WebCache.Set("id", SlideId);
-
-            return RedirectToPage();
-        }
-
-        public async Task<IActionResult> OnPostGoToAdvice()
-        {
-            if (GoToSlideId == null)
-            {
-                return BadRequest();
             }
             else
             {
-                WebCache.Set("gotoid", GoToSlideId);
+                SlideId = slideId + 1;
             }
-
+            WebCache.Set("id", SlideId);
 
             return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostClearGoTo()
+        public IActionResult OnPostPrevSlide()
         {
-            GoToSlideId = 0;
+            var slideId = WebCache.Get("id");
+            if (slideId == null)
+            {
+                SlideId = 0;
+            }
+            else
+            {
+                SlideId = slideId - 1;
+            }
+            WebCache.Set("id", SlideId);
+
+            return RedirectToPage();
+        }
+
+        public IActionResult OnPostGoToAdvice()
+        {
             WebCache.Set("gotoid", GoToSlideId);
 
             return RedirectToPage();
         }
 
-        private bool LoadSlide(int slideId)
+        public IActionResult OnPostClearGoTo()
         {
-            if (Advertisments != null && Advertisments.Count > 0 && slideId < Advertisments.Count && slideId >= 0)
-            {
-                Advertisment = Advertisments.ElementAt(slideId);
-                SlideOwner = _context.Advertisments.Include(a => a.User).Where(b => !b.IsRented).FirstOrDefault(a => a.Id == Advertisment.Id)?.User;
+            WebCache.Set("gotoid", 0);
+            WebCache.Set("id", 0);
 
-                return true;
-            }
-
-            return false;
+            return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostClearFilter()
+        public IActionResult OnPostClearFilter()
         {
             Filter = new FilterModel();
             WebCache.Set("filter", Filter);
             WebCache.Set("id", 0);
+            WebCache.Set("gotoid", 0);
 
             return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostApplyFilter()
+        public IActionResult OnPostApplyFilter()
         {
             WebCache.Set("filter", Filter);
             WebCache.Set("id", 0);
@@ -266,14 +263,9 @@ namespace CommercialRental.Pages
             return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostRent(int? id)
+        public async Task<IActionResult> OnPostRent(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+            if (User.Identity?.IsAuthenticated ?? false && !User.IsInRole("Admin"))
             {
                 var reqs = await _context.RequestsRent
                     .Where(i => i.AdvertismentId.Equals(id))

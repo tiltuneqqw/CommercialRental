@@ -1,5 +1,5 @@
 ﻿@page
-@using CommercialRental.Models;
+@using CommercialRental.Data.Models;
 
 @inject CommercialRental.Data.ApplicationDbContext _context
 
@@ -19,11 +19,12 @@
     </style>
     <script src="https://openlayers.org/en/v6.6.1/build/ol.js"></script>
 
-    List<Advertisment> advs = new List<Advertisment>();
+    int count = 0;
     List<string> regions = new List<string>();
     if (_context.Advertisments.Any())
     {
-        advs = _context.Advertisments.ToList();
+        var advs = _context.Advertisments.ToList();
+        count = advs.Count;
         regions = advs.Select(r => r.Region).Distinct().ToList();
     }
 }
@@ -59,7 +60,7 @@
     <div class="main-advice" id="main-advice">
         <div class="map-info">
             <h3>
-                <span>@(advs.Count % 10)</span>+ оголошень в більш ніж <span>@regions.Count</span> областях!
+                <span>@count</span>+ оголошень в більш ніж <span>@regions.Count</span> областях!
             </h3>
             <h6><strong>Створюйте</strong> оголошення, <strong>шукайте</strong> за допомогою фільтрів, <strong>керуйте</strong> своєю нерухомістю в одному додатку.<br /><span> "Все так душевно, по-домашньому."</span> </h6>
         </div>

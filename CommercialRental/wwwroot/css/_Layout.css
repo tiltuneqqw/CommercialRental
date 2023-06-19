@@ -50,7 +50,6 @@ for details on configuring this project to bundle and minify static web assets. 
     z-index: 3;
 }
 
-
 .link-nav {
     width: 30%;
     padding: 10px 0;
@@ -93,5 +92,4 @@ for details on configuring this project to bundle and minify static web assets. 
     padding: 7px 5px;
     font-weight: 400;
     font-size: 0.8em;
-
 }

@@ -1,4 +1,4 @@
-﻿namespace CommercialRental.Models
+﻿namespace CommercialRental.Data.Models
 {
     public class AppFile
     {

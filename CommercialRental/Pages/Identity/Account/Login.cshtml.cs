@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using CommercialRental.Models;
+using CommercialRental.Data.Models;
 
-namespace CommercialRental.Areas.Identity.Pages.Account
+namespace CommercialRental.Pages.Identity.Account
 {
     public class LoginModel : PageModel
     {
@@ -112,7 +112,7 @@ namespace CommercialRental.Areas.Identity.Pages.Account
                 }
                 if (result.RequiresTwoFactor)
                 {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, Input.RememberMe });
                 }
                 if (result.IsLockedOut)
                 {

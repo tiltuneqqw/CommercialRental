@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.ComponentModel.DataAnnotations;
 
-namespace CommercialRental.Models
+namespace CommercialRental.Data.Models
 {
     public class RequestRent
     {

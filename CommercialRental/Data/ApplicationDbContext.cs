@@ -1,4 +1,4 @@
-﻿using CommercialRental.Models;
+﻿using CommercialRental.Data.Models;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

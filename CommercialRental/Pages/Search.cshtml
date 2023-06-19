@@ -1,6 +1,6 @@
-﻿@page "/search-advertisments"
+﻿@page "/search-advertisements"
 
-@using CommercialRental.Models
+@using CommercialRental.Data.Models
 @using System.Globalization;
 
 @model CommercialRental.Pages.SearchModel
@@ -18,9 +18,11 @@
             Фільтр
         </div>
         <div class="sidebar-category">
+            <h5 style="text-align: center;@(Model.GoToSlideId != 0 ? "display: block;" : "display: none;")">Оголошення #@Model.GoToSlideId</h5>
             <form method="post">
-                <div class="apply-filters">
-                    <button type="submit" asp-page-handler="ApplyFilter" class="btn-apply btn btn-primary">Застосувати</button>
+                <div class="filter-buttons">
+                    <button type="submit" asp-page-handler="ApplyFilter" class="btn btn-primary btn-filter">Застосувати</button>
+                    <button asp-page-handler="ClearFilter" onclick="removeFields()" type="submit" class="btn btn-danger btn-filter">Скинути</button>
                 </div>
                 <hr />
                 <div class="category-dropdown">
@@ -61,7 +63,7 @@
                     <button type="button" class="collapsible">Місто</button>
                     <div class="content">
                         <select asp-for="Filter.City" id="city-select">
-                            <option disabled="disabled" value="" selected="selected">Спершу виберіть регіон</option>
+                            <option disabled="disabled" value="" selected="selected">Виберіть область</option>
                         </select>
                     </div>
                 </div>
@@ -137,24 +139,20 @@
                         <label for="livecheck" class="content-label">Перевірено експертом</label>
                     </div>
                 </div>
-                <hr />
-                <div class="clear-filters">
-                    <button asp-page-handler="ClearFilter" onclick="removeFields()" type="submit" class="btn-clear btn btn-danger">Скинути</button>
-                </div>
             </form>
         </div>
     </div>
     <div class="div-with-tip">
-        @if (Model.Advertisments == null || Model.Advertisments.Count == 0)
+        @if (Model.Advertisment == null)
         {
-            <div class="find-tip">Не знайдено оголошень.<br />Спробуйте задати інші фільтри.</div>
+            <p style="padding-top: 50px">Не знайдено оголошень.<br />Спробуйте задати інші фільтри.</p>
         }
         else
         {
             <div class="main-adv">
                 <div class="slide-buttons">
                     <form method="post">
-                        <button asp-page-handler="PrevSlide" class="slide-btn" type="submit" style=@(Model.SlideId == 0 ? "display: none" : "display: block")>
+                        <button asp-page-handler="PrevSlide" class="slide-btn" type="submit" style=@(Model.SlideId == 0 || Model.GoToSlideId != 0 ? "display: none" : "display: block")>
                             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z" />
                             </svg>
@@ -162,7 +160,14 @@
                     </form>
                     <div class="find-tip">
                         <div class="advice-count">
-                            Оголошення <strong>@(@Model.SlideId + 1)</strong> з <strong>@Model.Advertisments.Count</strong>
+                            Оголошення 
+                            @if (Model.GoToSlideId == 0) {
+                                <strong>@(Model.SlideId + 1)</strong><small> з </small><strong>@Model.Advertisments.Count</strong>
+                            }
+                            else
+                            {
+                                <strong>#@Model.Advertisment.Id</strong>
+                            }
                         </div>
                         <form method="post">
                             <div class="go-to-div">
@@ -171,7 +176,7 @@
                                 <button asp-page-handler="GoToAdvice" id="btn-go-to" type="submit" class="btn btn-outline-success" title="Відкрити оголошення">
                                     &#10004;
                                 </button>
-                                @if (Model.GoToSlideId != null && Model.GoToSlideId != 0)
+                                @if (Model.GoToSlideId != 0)
                                 {
                                     <button asp-page-handler="ClearGoTo" type="submit" class="btn btn-danger" title="Повернутися до пошуку">
                                         &#x2718;
@@ -181,7 +186,7 @@
                         </form>
                     </div>
                     <form method="post">
-                        <button asp-page-handler="NextSlide" class="slide-btn" type="submit" style=@(Model.SlideId == Model.Advertisments.Count - 1 ? "display: none" : "display: block")>
+                        <button asp-page-handler="NextSlide" class="slide-btn" type="submit" style=@(Model.IsLast || Model.GoToSlideId != 0 ? "display: none" : "display: block")>
                             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
                             </svg>
@@ -259,15 +264,15 @@
                                 <div class="contact-tables">
                                     <div class="details-table">
                                         <div class="detail-name">Автор: </div>
-                                        <div class="detail-value">@Model.SlideOwner.Name</div>
+                                        <div class="detail-value">@Model.Advertisment.User.Name</div>
                                     </div>
                                     <div class="details-table">
                                         <div class="detail-name">Телефон: </div>
-                                        <div class="detail-value">@($"+38 {Model.SlideOwner.PhoneNumber}")</div>
+                                        <div class="detail-value">@($"+38 {Model.Advertisment.User.PhoneNumber}")</div>
                                     </div>
                                     <div class="details-table">
                                         <div class="detail-name">Електронна пошта: </div>
-                                        <div class="detail-value">@Model.SlideOwner.Email</div>
+                                        <div class="detail-value">@Model.Advertisment.User.Email</div>
                                     </div>
                                 </div>
                             </div>

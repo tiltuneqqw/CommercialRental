@@ -28,12 +28,13 @@ h1, h2, h3, h4, h5, h6 {
     height: 60px;
 }
 
-.btn-apply {
-    width: 100%;
+.btn-filter {
+    width: 50%;
 }
 
-.btn-clear {
-    width: 100%;
+.filter-buttons {
+    display: flex;
+    gap: 5px;
 }
 
 .sidebar-category {
@@ -233,8 +234,10 @@ hr {
 .details-table {
     margin: 5px 0;
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     font-size: 1em;
+    text-align: left;
 }
 
 .detail-name {

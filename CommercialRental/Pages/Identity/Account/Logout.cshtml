@@ -9,7 +9,7 @@
     @{
         if (User.Identity?.IsAuthenticated ?? false)
         {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post">
+            <form class="form-inline" asp-page="/Account/Logout" method="post">
                 <button type="submit" class="nav-link btn btn-link text-dark">Натисніть, щоб вийти з акаунту</button>
             </form>
         }

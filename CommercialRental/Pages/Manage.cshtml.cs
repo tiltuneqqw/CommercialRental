@@ -1,5 +1,5 @@
 using CommercialRental.Data;
-using CommercialRental.Models;
+using CommercialRental.Data.Models;
 using ContosoUniversity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
